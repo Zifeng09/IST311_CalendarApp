@@ -1,0 +1,60 @@
+package mycalendar;
+
+/**
+ *
+ * @author zifengxia
+ */
+import javax.swing.table.*;
+import javax.swing.event.*;
+import java.util.*;
+
+/**
+ *
+ * @author Zifeng
+ */
+public class ContactTableModel extends AbstractTableModel{
+    
+    private static String[] columnNames = {"Name", "Gender", "Phonenum"};
+    private ArrayList<Contact> contactTableData;
+    
+    public ContactTableModel(ArrayList<Contact> theContactTableData){
+        this.contactTableData = theContactTableData;
+    }
+    
+    public int getColumnCount() {
+        return columnNames.length;
+    }
+
+    public int getRowCount() {
+        return contactTableData.size();
+    }
+
+    public String getColumnName(int col) {
+        return columnNames[col];
+    }
+
+    public Object getValueAt(int row, int col) {
+        Object objectToReturn = new Object();
+        switch(col){
+            case 0: objectToReturn = contactTableData.get(row).getName();break;
+            case 1: objectToReturn = contactTableData.get(row).getGender();break;
+            case 2: objectToReturn = contactTableData.get(row).getPhonenum();break;
+        }
+        return objectToReturn;
+    }
+
+    public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
+    }
+
+
+    public boolean isCellEditable(int row, int col) {
+       
+        if (col < 2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+}
