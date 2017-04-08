@@ -1,0 +1,134 @@
+
+package mycalendar;
+
+/**
+ *
+ * @author zifengxia
+ */
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Dimension;
+import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
+
+public class ContactListUI extends JFrame{
+    
+    private ContactCntl theContactCntl = null;
+    private JButton backButton;
+    private JButton goButton;
+    private JButton deleteButton;
+    private JButton newButton;
+    private JPanel buttonPanel;
+    private JPanel tablePanel;
+
+    private JTable theContactTable;
+    private JScrollPane theScrollPane;
+    TableRowSorter<TableModel> contactTableSorter;
+    
+    public ContactListUI(ContactCntl parentContactCntl){
+        theContactCntl = parentContactCntl;
+        initCustomComponents();
+    }
+    
+    public void initCustomComponents(){
+        this.setSize(240, 400);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        
+    
+        backButton = new JButton("<");
+        backButton.setPreferredSize(new Dimension(30, 20));
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
+            }
+        });
+        
+        goButton = new JButton("Go");
+        goButton.setPreferredSize(new Dimension(30, 20));
+        goButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goButtonActionPerformed(evt);
+            }
+        });
+        
+        newButton = new JButton("New");
+        newButton.setPreferredSize(new Dimension(30, 20));
+        newButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newButtonActionPerformed(evt);
+            }
+        });
+        
+        deleteButton = new JButton("Del");
+        deleteButton.setPreferredSize(new Dimension(30, 20));
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+        
+        buttonPanel = new JPanel(new GridLayout(1,4));
+        buttonPanel.add(backButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(newButton);
+        buttonPanel.add(goButton);
+        
+       
+        theContactTable = new JTable(this.theContactCntl.getContactTableModel());
+        theContactTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+        theContactTable.getColumnModel().getColumn(1).setPreferredWidth(15);
+        theContactTable.getColumnModel().getColumn(2).setPreferredWidth(20);
+        
+  
+        contactTableSorter = new TableRowSorter<TableModel>(this.theContactTable.getModel());
+        theContactTable.setRowSorter(contactTableSorter);
+ 
+  
+        theScrollPane = new JScrollPane(theContactTable);
+        theScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        theScrollPane.setPreferredSize(new Dimension(200,320));
+        theContactTable.setFillsViewportHeight(true);
+        
+        tablePanel = new JPanel();
+        tablePanel.add(theScrollPane);  
+        
+   
+        this.getContentPane().setLayout(new BorderLayout());
+        this.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+        this.getContentPane().add(tablePanel, BorderLayout.CENTER);
+    }
+    
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
+    
+        int selectedModelRow = -1;
+        Contact selectedContact = null;
+        theContactCntl.getConactDataUI(selectedModelRow, selectedContact);
+    }  
+    
+    private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
+      
+        int selectedTableRow = theContactTable.getSelectedRow();
+        int selectedModelRow = theContactTable.convertRowIndexToModel(selectedTableRow);
+        Contact selectedContact = this.theContactCntl.getContactList().getListOfContact().get(selectedModelRow);
+        theContactCntl.getConactDataUI(selectedModelRow, selectedContact);
+        System.out.println(selectedContact.toString());
+    }  
+    
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
+     
+        theContactCntl.getNavigationCntl();
+        
+    }
+    
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
+       
+        int selectedTableRow = theContactTable.getSelectedRow();
+        int selectedModelRow = theContactTable.convertRowIndexToModel(selectedTableRow);
+        ContactListUI.this.theContactCntl.getContactList().getListOfContact().remove(selectedModelRow);
+        this.theContactCntl.getContactTableModel().fireTableDataChanged();
+    }  
+    
+}
